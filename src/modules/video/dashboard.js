@@ -26,7 +26,7 @@ export default {
             if (!this.imageUrl) {
                 return
             }
-            this.$parent.execCommand(Command.INSERT_IMAGE, this.imageUrl)
+            this.$parent.execCommand(Command.INSERT_VIDEO, this.imageUrl)
             this.imageUrl = null
         },
         pick() {
@@ -62,17 +62,22 @@ export default {
             //         quality: 80
             //     },
             // }
+            console.log(config)
             if (!config.upload && typeof config.server === 'string') {
                 config.upload = {url: config.server}
+                console.log(1)
             }
             if (config.upload && !config.upload.url) {
                 config.upload = null
+                console.log(2)
             }
             if (config.upload && typeof config.fieldName === 'string') {
                 config.upload.fieldName = config.fieldName
+                console.log(3)
             }
 
             if (typeof config.compress === 'boolean') {
+                console.log(4)
                 config.compress = {
                     width: config.width,
                     height: config.height,
@@ -82,28 +87,32 @@ export default {
 
             const file = this.$refs.file.files[0]
             if (file.size > config.sizeLimit) {
+                console.log(5)
                 this.setUploadError(this.$parent.locale['exceed size limit'])
                 return
             }
             this.$refs.file.value = null
 
             if (config.compress) {
+                console.log(6)
                 config.compress.fieldName = config.upload && config.upload.fieldName
-                    ? config.upload.fieldName : 'image'
-                lrz(file, config.compress).then((rst) => {
-                    if (config.upload) {
-                        component.uploadToServer(rst.file)
-                    } else {
-                        component.insertBase64(rst.base64)
-                    }
-                }).catch((err) => {
-                    this.setUploadError(err.toString())
-                })
-                return
+                    ? config.upload.fieldName : 'video'
+                // lrz(file, config.compress).then((rst) => {
+                //     if (config.upload) {
+                //         component.uploadToServer(rst.file)
+                //     } else {
+                //         component.insertBase64(rst.base64)
+                //     }
+                // }).catch((err) => {
+                //     console.log('erro')
+                //     this.setUploadError(err.toString())
+                // })
+                // return
             }
             // 不需要压缩
             // base64
             if (!config.upload) {
+                console.log(7)
                 const reader = new FileReader()
                 reader.onload = (e) => {
                     component.insertBase64(e.target.result)
@@ -112,16 +121,16 @@ export default {
                 return
             }
             // 上传服务器
-            component.uploadToServer(file)
+            // component.uploadToServer(file)
         },
         insertBase64(data) {
-            this.$parent.execCommand(Command.INSERT_IMAGE, data)
+            this.$parent.execCommand(Command.INSERT_VIDEO, data)
         },
         uploadToServer(file) {
             const config = this.$options.module.config
 
             const formData = new FormData()
-            formData.append(config.upload.fieldName || 'image', file)
+            formData.append(config.upload.fieldName || 'video', file)
 
             if (typeof config.upload.params === 'object') {
                 Object.keys(config.upload.params).forEach((key) => {
