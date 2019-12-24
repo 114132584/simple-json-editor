@@ -29,3 +29,5 @@ node_modules
 # idea config
 .idea
 *.iml
+/yarn.lock
+/yarn.lock

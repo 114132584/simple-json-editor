@@ -17,38 +17,102 @@
 </head>
 <body>
 <div id="app">
-    <simple-json-editor :content="content" @change="updateData" :height="500"></simple-json-editor>
+    <simple-json-editor :content="content2" @change="updateData" :height="500"></simple-json-editor>
 </div>
 
 <script>
+
     Vue.use(SimpleJsonEditor, {
         hiddenModules: [
-            "info",
-            "text",
-            "color",
-            "font",
-            "align",
-            "tabulation",
-            "hr",
-            "list",
-            "link",
-            "unlink",
-            "full-screen",
+            'info',
+            'text',
+            'color',
+            'font',
+            'align',
+            'tabulation',
+            'hr',
+            'list',
+            'link',
+            'unlink',
+            'full-screen'
         ],
         visibleModules: [
-            "image"//will not show in editor
+            'image',//will not show in editor,
+            'video',
+            'eraser'
         ]
     })
     new Vue({
-        el: "#app",
+        el: '#app',
         data: {
-            content: "<h3>Simple Json Editor,custom modules</h3>",
+            content: '', // json str
+            content2: '', // html
+        },
+
+        mounted() {
+            let tempStr = JSON.stringify([
+                {type: 'text', value: 'Simple Json Editor'},
+                {
+                    type: 'img',
+                    value: 'https://p1.music.126.net/kMJI9bCrO3pyXtqyB-iyAA==/109951164566817824.jpg?param=50y50'
+                }, {type: 'text', value: 'Simple Json Editor22'}, {
+                    type: 'img',
+                    value: 'http://p1.music.126.net/WixqgEdI1jLPcdt6UeXV6g==/109951164574244415.jpg?imageView&quality=89'
+                }, {
+                    type: 'video',
+                    value: 'https://www.w3school.com.cn/i/movie.mp4'
+                }])
+            this.content= tempStr
+            this.content2= this.formatJSONStr2Html(tempStr)
+
         },
         methods: {
             updateData: function (data) {
-                // sync content to component
-                this.content = data
+                this.content = this.formathtmlList2Str(data)
+                this.content2 = data
             },
+
+            formatJSONStr2Html(content) {
+                const tempJSON = JSON.parse(content)
+                let tempHtml = ''
+                if (tempJSON.length > 0) {
+                    tempJSON.forEach((item) => {
+                        if (item.type === 'text') {
+                            tempHtml += `<p>${item.value}</p>`
+                        }
+                        if (item.type === 'img') {
+                            tempHtml += `<img src="${item.value}" />`
+                        }
+                        if (item.type === 'video') {
+                            tempHtml += `${'<video controls="controls" autoplay="autoplay" width="100%">'
+                                + '<source src="'}${item.value}" type="video/mp4" />`
+                                + 'Your browser does not support the video tag.'
+                                + '</video>'
+                        }
+                    })
+                }
+                return tempHtml
+            },
+            // import parser from 'posthtml-parser'     xml化 在这用不了，所以才想2次封装
+            formathtmlList2Str(list,i) {
+                console.log(i)
+                const newArr = []
+                if (list.length > 0) {
+                    list.forEach((item) => {
+                        if (!item.tag || item.tag === 'div' || item.tag === 'p') {
+                            newArr.push({type: 'text', value: item.content[0]})
+                        }
+                        if (item.tag === 'img') {
+                            newArr.push({type: 'img', value: item.content[0]})
+                        }
+                        if (item.tag === 'video') {
+                            newArr.push({type: 'video', value: item.content[0].attrs.src})
+                        }
+                    })
+                }
+                return JSON.stringify(newArr)
+            },
+
         }
     })
 </script>

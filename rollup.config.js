@@ -5,15 +5,18 @@ import cssnext from 'postcss-cssnext'
 import simplevars from 'postcss-simple-vars'
 import cssnano from 'cssnano'
 import buble from 'rollup-plugin-buble'
-import { terser } from 'rollup-plugin-terser'
+// import { terser } from 'rollup-plugin-terser'
 import html from 'rollup-plugin-html'
 import autoprefixer from 'autoprefixer'
 // import clean from 'postcss-clean'
 // import atImport from 'postcss-import'
 import nodeResolve from 'rollup-plugin-node-resolve'
 import replace from 'rollup-plugin-replace'
-import commonJs from 'rollup-plugin-commonjs'
 import license from 'rollup-plugin-license'
+import commonjs from 'rollup-plugin-commonjs'
+import json from 'rollup-plugin-json'
+import builtins from 'rollup-plugin-node-builtins'
+import globals from 'rollup-plugin-node-globals'
 const pkg = require('./package.json')
 
 /**
@@ -27,6 +30,8 @@ export default {
         name: 'SimpleJsonEditor'
     },
     plugins: [
+        globals(),
+        builtins(),
         license({
             banner: `simple-json-editor ${pkg.version}\n${pkg.repository.url}\nbuild at ${new Date()}`
         }),
@@ -54,20 +59,24 @@ export default {
                 conservativeCollapse: true
             }
         }),
-        commonJs({
-            include: 'node_modules/lrz/**'
+        nodeResolve({jsnext: true, main: true}),
+        commonjs({
+            include: 'node_modules/**'  // Default: undefined
         }),
-        nodeResolve({jsnext: true}),
+        json({
+            include: 'node_modules/**',
+            preferConst: true // Default: false
+        }),
         buble({
             include: '**/*.js'
         }),
-        terser({
-            output: {
-                ascii_only: true // 仅输出ascii字符
-            },
-            compress: {
-                // pure_funcs: ['console.log'] // 去掉console.log函数
-            }
-        })
+        // terser({
+        //     output: {
+        //         // ascii_only: true // 仅输出ascii字符
+        //     },
+        //     compress: {
+        //         // pure_funcs: ['console.log'] // 去掉console.log函数
+        //     }
+        // })
     ]
 }

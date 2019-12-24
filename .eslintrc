@@ -60,15 +60,7 @@
         "json": "always"
       }
     ],
-    "no-console": [
-      "error",
-      {
-        "allow": [
-          "warn",
-          "error"
-        ]
-      }
-    ]
+    "no-console": "off"
   },
   "extends": "eslint-config-airbnb"
 }

@@ -1,3 +1,4 @@
+// import parser from 'posthtml-parser'     在这能用
 import RangeHandler from './range/handler'
 import './style.css'
 import template from './editor.html'
@@ -77,6 +78,46 @@ export default {
         }
     },
     methods: {
+        formatJSONStr2Html(content) {
+            const tempJSON = JSON.parse(content)
+            let tempHtml = ''
+            if (tempJSON.length > 0) {
+                tempJSON.forEach((item) => {
+                    if (item.type === 'text') {
+                        tempHtml += `<p>${item.value}</p>`
+                    }
+                    if (item.type === 'image') {
+                        tempHtml += `<img src="${item.value}" />`
+                    }
+                    if (item.type === 'video') {
+                        tempHtml += `${'<video controls="controls" autoplay="autoplay" width="100%">'
+                            + '<source src="'}${item.value}" type="video/mp4" />`
+                            + 'Your browser does not support the video tag.'
+                            + '</video>'
+                    }
+                })
+            }
+            return tempHtml
+        },
+        // 在这能用
+        formathtmlList2Str(list,i) {
+            console.log(i)
+            const newArr = []
+            if (list.length > 0) {
+                list.forEach((item) => {
+                    if (!item.tag || item.tag === 'div' || item.tag === 'p') {
+                        newArr.push({type: 'text', value: item.content[0]})
+                    }
+                    if (item.tag === 'img') {
+                        newArr.push({type: 'img', value: item.content[0]})
+                    }
+                    if (item.tag === 'video') {
+                        newArr.push({type: 'video', value: item.content[0].attrs.src})
+                    }
+                })
+            }
+            return JSON.stringify(newArr)
+        },
         toggleFullScreen(){
             this.fullScreen = !this.fullScreen
         },

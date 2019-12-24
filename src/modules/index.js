@@ -1,6 +1,6 @@
 // import align from './align/index'
 // import color from './color/index'
-// import eraser from './eraser/index'
+import eraser from './eraser/index'
 // import font from './font/index'
 // import fullScreen from './full-screen/index'
 // import hr from './hr/index'
@@ -27,9 +27,9 @@ export default [
     unlink,
     // table,
     image,
-    video
+    video,
     // hr,
-    // eraser,
+    eraser,
     // undo,
     // fullScreen,
     // info
