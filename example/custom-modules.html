@@ -69,7 +69,7 @@
         methods: {
             updateData: function (data) {
                 this.content = this.formathtmlList2Str(data)
-                this.content2 = data
+                this.content2 = this.formatJSONStr2Html(this.content)
             },
 
             formatJSONStr2Html(content) {
@@ -103,7 +103,7 @@
                             newArr.push({type: 'text', value: item.content[0]})
                         }
                         if (item.tag === 'img') {
-                            newArr.push({type: 'img', value: item.content[0]})
+                            newArr.push({type: 'img', value: item.attrs.src})
                         }
                         if (item.tag === 'video') {
                             newArr.push({type: 'video', value: item.content[0].attrs.src})

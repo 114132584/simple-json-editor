@@ -1,4 +1,4 @@
-// import parser from 'posthtml-parser'     在这能用
+import parser from 'posthtml-parser'     // 在这能用
 import RangeHandler from './range/handler'
 import './style.css'
 import template from './editor.html'
@@ -43,9 +43,10 @@ export default {
         content(val) {
             const content = this.$refs.content.innerHTML
             if (val !== content) {
+                console.log(parser(content))
                 this.$refs.content.innerHTML = val
             }
-            this.$emit('update:content', val)
+            this.$emit('update:content', parser(content))
         },
         fullScreen(val){
             const component = this
@@ -139,7 +140,8 @@ export default {
                 new RangeHandler(this.range).execCommand(command, arg)
             }
             this.toggleDashboard()
-            this.$emit('change', this.$refs.content.innerHTML)
+            console.log(parser(this.$refs.content.innerHTML))
+            this.$emit('change', parser(this.$refs.content.innerHTML))
         },
         getCurrentRange(){
             return this.range
@@ -201,7 +203,8 @@ export default {
         content.innerHTML = this.content
         content.addEventListener('mouseup', this.saveCurrentRange, false)
         content.addEventListener('keyup', () => {
-            this.$emit('change', content.innerHTML)
+            console.log(parser(content.innerHTML))
+            this.$emit('change', parser(content.innerHTML))
             this.saveCurrentRange()
         }, false)
         content.addEventListener('mouseout', (e) => {
